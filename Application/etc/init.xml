@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+	<production>
+		<phpSettings>
+			<!-- Error -->
+			<display_startup_errors>0</display_startup_errors>
+			<display_errors>0</display_errors>
+
+			<!-- Time -->
+			<date>
+				<timezone></timezone>
+			</date>
+		</phpSettings>
+
+		<!-- Include Path -->
+		<includePaths>
+			<library>APPLICATION_PATH/../Library</library>
+			<application>APPLICATION_PATH</application>
+		</includePaths>
+
+		<!-- Bootstap -->
+		<bootstrap>
+			<path>APPLICATION_PATH/Bootstrap.php</path>
+			<class>Bootstrap</class>
+		</bootstrap>
+
+		<!-- Resources -->
+		<resources>
+			<!-- Locale -->
+			<locale>
+				<default>fr_FR</default>
+			</locale>
+
+			<!-- FrontController -->
+			<frontController>
+				<!-- Error -->
+				<throwerrors>false</throwerrors>
+				<params>
+					<displayExceptions>0</displayExceptions>
+				</params>
+
+				<!-- Default -->
+				<defaultControllerName>Index</defaultControllerName>
+				<defaultAction>index</defaultAction>
+
+				<controllerDirectory>APPLICATION_PATH/controllers</controllerDirectory>
+			</frontController>
+		</resources>
+	</production>
+
+	<development extends="production">
+		<phpSettings>
+			<!-- Error -->
+			<display_startup_errors>1</display_startup_errors>
+			<display_errors>1</display_errors>
+		</phpSettings>
+
+		<!-- Resources -->
+		<resources>
+			<!-- FrontController -->
+			<frontController>
+				<throwerrors>true</throwerrors>
+				<params>
+					<displayExceptions>1</displayExceptions>
+				</params>
+			</frontController>
+		</resources>
+	</development>
+
+	<test extends="production">
+		<phpSettings>
+			<!-- Error -->
+			<display_startup_errors>1</display_startup_errors>
+			<display_errors>1</display_errors>
+		</phpSettings>
+
+		<!-- Resources -->
+		<resources>
+			<!-- FrontController -->
+			<frontController>
+				<throwerrors>true</throwerrors>
+				<params>
+					<displayExceptions>1</displayExceptions>
+				</params>
+			</frontController>
+		</resources>
+	</test>
+
+</config>

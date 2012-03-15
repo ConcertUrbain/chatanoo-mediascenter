@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configdata>
+
+	<production>
+		<debug>false</debug>
+	    <database>
+	        <adapter>pdo_mysql</adapter>
+	        <params>
+	            <host>localhost</host>
+	            <username>medias</username>
+	            <password>center</password>
+	            <dbname>dring93_medias_center</dbname>
+	        </params>
+	    </database>
+	    <mediasDirectory>Medias</mediasDirectory>
+	</production>
+
+	<development extends="production">
+		<debug>true</debug>
+	    <database>
+	        <adapter>pdo_mysql</adapter>
+	        <params>
+	            <host>localhost</host>
+	            <username>root</username>
+	            <password>root</password>
+	            <dbname>MediaCenter</dbname>
+	        </params>
+	    </database>
+	</development>
+
+	<test extends="production">
+		<debug>true</debug>
+	    <database>
+	        <adapter>pdo_mysql</adapter>
+	        <params>
+	            <host>localhost</host>
+	            <username>root</username>
+	            <password>root</password>
+	            <dbname>MediaCenterTest</dbname>
+	        </params>
+	    </database>
+	</test>
+
+</configdata>
