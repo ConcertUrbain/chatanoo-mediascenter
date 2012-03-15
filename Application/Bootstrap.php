@@ -119,6 +119,7 @@
 			$router->addRoute('getAudio', $route4);
 		}
 		
+		// Logger
 		protected function _initLog()
 		{
 			$writer = new Zend_Log_Writer_Stream(APPLICATION_PATH . '/../Logs/log.txt');

@@ -1,0 +1,6 @@
+.svn
+/Medias
+/Logs/log.txt
+index.php
+rsync.sh
+rsync.exclude
