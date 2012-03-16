@@ -7,9 +7,9 @@
 	        <adapter>pdo_mysql</adapter>
 	        <params>
 	            <host>localhost</host>
-	            <username>medias</username>
-	            <password>center</password>
-	            <dbname>dring93_medias_center</dbname>
+	            <username>medias_user</username>
+	            <password>concert</password>
+	            <dbname>dring93_media_center</dbname>
 	        </params>
 	    </database>
 	    <mediasDirectory>Medias</mediasDirectory>
