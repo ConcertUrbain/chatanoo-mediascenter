@@ -96,6 +96,38 @@
 					$type = 'video';
 					$uiid .= '-V';
 					break;
+				case 'application/octet-stream': 
+					switch($pathinfo["extension"])
+					{
+						case 'png':
+					    case 'jpg':
+						case 'jpeg':
+					    case 'gif':
+					    	$type = 'picture';
+					        $uiid .= '-P';
+					        break;
+						case 'mp3':
+					    case 'wav':
+					    case 'aac':
+					    case 'm4a':
+					    	$type = 'audio';
+					        $uiid .= '-A';
+					        break;
+						case 'mov':
+						case '3gp':
+						case '3g2':
+						case 'flv':
+						case 'mp4':
+						case 'wmv':
+							$type = 'video';
+							$uiid .= '-V';
+							break;
+						default:
+							print('Invalid file extension: ' . $file['extension']);
+							return;
+							break;
+					}
+					break;
 				default:
 					print('Invalid file type: ' . $file['type']);
 					return;
