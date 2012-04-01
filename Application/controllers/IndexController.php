@@ -72,6 +72,9 @@
 			$uiid = 'MC-';
 			for($i = 0; $i < 8; $i++)
 				$uiid .= $chars[rand(0, count($chars) - 1)];
+			
+			$pathinfo = pathinfo($file['name']);	
+			
 			switch ($file['type'])
 			{
 				case 'image/jpeg':
