@@ -26,28 +26,28 @@
     		switch($format)
     		{
     			case 'avi':
-    				$this->getResponse()->setHeader('Content-type', 'video/x-sgi-movie');
+    				header('Content-Type: video/x-sgi-movie');
     				break;
     			case 'mov':
-    				$this->getResponse()->setHeader('Content-type', 'video/quicktime');
+    				header('Content-Type: video/quicktime');
     				break;
     			case '3gp':
-    				$this->getResponse()->setHeader('Content-type', 'video/3gpp');
+    				header('Content-Type: video/3gpp');
     				break;
     			case 'flv':
-    				$this->getResponse()->setHeader('Content-type', 'video/x-flv');
+    				header('Content-Type: video/x-flv');
     				break;
     			case 'mp4':
-    				$this->getResponse()->setHeader('Content-type', 'video/mp4');
+    				header('Content-Type: video/mp4');
     				break;
     			case 'wmv':
-    				$this->getResponse()->setHeader('Content-type', 'video/x-ms-wmv');
+    				header('Content-Type: video/x-ms-wmv');
     				break;
     			case 'ogv':
-    				$this->getResponse()->setHeader('Content-type', 'video/ogg');
+    				header('Content-Type: video/ogg');
     				break;
     			case 'webm':
-    				$this->getResponse()->setHeader('Content-type', 'video/x-webm');
+    				header('Content-Type: video/x-webm');
     				break;
     		}
 			
@@ -65,20 +65,21 @@
 			
 			$media_path = APPLICATION_PATH . '/../' . Zend_Registry::get('config')->get('mediasDirectory') . '/' . $media_uiid . '/';
 			
-			$outputFile = $media_path.$media_uiid;
+			$filename = $media_uiid;
 			if($width && $height)
-				$outputFile .= "_".$width."x".$height;
+				$filename .= "_".$width."x".$height;
 			if($ratio_width && $ratio_height)
-				$outputFile .= "_".$ratio_width."r".$ratio_height;
+				$filename .= "_".$ratio_width."r".$ratio_height;
 			if($rate)
-				$outputFile .= "_".$rate."Hz";
+				$filename .= "_".$rate."Hz";
 			if($bits)
-				$outputFile .= "_".$bits."bits-s";
+				$filename .= "_".$bits."bits-s";
 			if($disable_audio)
-				$outputFile .= "_disable_audio";
+				$filename .= "_disable_audio";
 			if($limit_size)
-				$outputFile .= "_".$limit_size."k";
-			$outputFile .= ".".$format;
+				$filename .= "_".$limit_size."k";
+			$filename .= ".".$format;
+			$outputFile = $media_path.$filename;
 			
 			$query = '/usr/local/bin/ffmpeg ';
 			$query .= "-i '".$media_path.$row['original']."' ";
@@ -109,10 +110,10 @@
 					$query .= "-acodec libfaac -ar 44100 ";
 		    		break;
 		    	case 'ogv':
-					$query .= "-acodec vorbis ";
+					$query .= "-acodec vorbis -ac 2 ";
 		    		break;
 		    	case 'webm':
-					$query .= "-acodec vorbis -strict experimental ";
+					$query .= "-acodec vorbis -ac 2 -strict experimental ";
 		    		break;
 				default:
 					$query .= "-acodec libmp3lame -ar 44100 ";
@@ -153,7 +154,17 @@
 				return;
 			}
 			
-			$f= @fopen($outputFile,"r"); 
+			/*header('Expires: 0');
+			header('Cache-Control: must-revalidate');
+			header('Pragma: public');
+			header('Content-Length: ' . filesize($outputFile));
+			
+			ob_clean();
+			flush();
+			readfile($outputFile);
+			exit();*/
+			
+			/*$f= @fopen($outputFile,"r"); 
 			if($f) 
 			{ 
 				$content = fread($f, filesize($outputFile));
@@ -173,7 +184,66 @@
 				
 				print($content);
 				fclose($f); 
-			}
+			}*/
+			
+			$this->smartReadFile($outputFile, $filename);
+		}
+		
+		private function smartReadFile($location, $filename, $mimeType='application/octet-stream')
+		{ 
+			if(!file_exists($location))
+		  	{ 
+				header ("HTTP/1.0 404 Not Found");
+		  	  	return;
+		  	}
+          	
+		  	$size=filesize($location);
+		  	$time=date('r',filemtime($location));
+          	
+		  	$fm=@fopen($location,'rb');
+		  	if(!$fm)
+		  	{ 
+				header ("HTTP/1.0 505 Internal server error");
+		  	  	return;
+		  	}
+          	
+		  	$begin=0;
+		  	$end=$size;
+          	
+		  	if(isset($_SERVER['HTTP_RANGE']))
+		  	{ 
+				if(preg_match('/bytes=\h*(\d+)-(\d*)[\D.*]?/i', $_SERVER['HTTP_RANGE'], $matches))
+		  	  	{ 
+					$begin=intval($matches[1]);
+		  	    	if(!empty($matches[2]))
+		  	      		$end=intval($matches[2]);
+		  	  	}
+		  	}
+          	
+		  	if($begin>0||$end<$size)
+		  	  	header('HTTP/1.0 206 Partial Content');
+		  	else
+		  	  	header('HTTP/1.0 200 OK');  
+          	
+		  	//header("Content-Type: $mimeType"); 
+		  	header('Cache-Control: public, must-revalidate, max-age=0');
+		  	header('Pragma: no-cache');  
+		  	header('Accept-Ranges: bytes');
+		  	header('Content-Length:'.($end-$begin));
+		  	header("Content-Range: bytes $begin-$end/$size");
+		  	header("Content-Disposition: inline; filename=$filename");
+		  	header("Content-Transfer-Encoding: binary\n");
+		  	header("Last-Modified: $time");
+		  	header('Connection: close');  
+          	
+		  	$cur=$begin;
+		  	fseek($fm,$begin,0);
+          	
+		  	while(!feof($fm)&&$cur<$end&&(connection_status()==0))
+		  	{ 
+				print fread($fm,min(1024*16,$end-$cur));
+		  	  	$cur+=1024*16;
+		  	}
 		}
 		
 		public function previewAction()
