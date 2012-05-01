@@ -104,16 +104,14 @@
 			switch($format)
     		{
     			case 'mp4':
-					$query .= "-acodec libmp3lame -ar 44100 ";
-    				break;
 		    	case 'mov':
 					$query .= "-acodec libfaac -ar 44100 ";
 		    		break;
 		    	case 'ogv':
-					$query .= "-acodec vorbis -ac 2 ";
+					$query .= "-acodec libvorbis -ac 2 ";
 		    		break;
 		    	case 'webm':
-					$query .= "-acodec vorbis -ac 2 -strict experimental ";
+					$query .= "-acodec libvorbis -ac 2 -strict experimental ";
 		    		break;
 				default:
 					$query .= "-acodec libmp3lame -ar 44100 ";
@@ -153,38 +151,6 @@
 				$this->getResponse()->appendBody('<p>Not found</p>'); 
 				return;
 			}
-			
-			/*header('Expires: 0');
-			header('Cache-Control: must-revalidate');
-			header('Pragma: public');
-			header('Content-Length: ' . filesize($outputFile));
-			
-			ob_clean();
-			flush();
-			readfile($outputFile);
-			exit();*/
-			
-			/*$f= @fopen($outputFile,"r"); 
-			if($f) 
-			{ 
-				$content = fread($f, filesize($outputFile));
-				if(strlen($content) == 0)
-				{
-					fclose($f); 
-					unlink($outputFile);
-					
-					Zend_Registry::get('logger')->err('[Video Convertion] Cache has no size (' . $outputFile . ')');
-					
-					$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-					$this->getResponse()->appendBody('<p>Not found</p>'); 
-					return;
-				}
-				
-				//Zend_Registry::get('logger')->info('[Video Convertion] loaded from cache (' . $outputFile . ')');
-				
-				print($content);
-				fclose($f); 
-			}*/
 			
 			$this->smartReadFile($outputFile, $filename);
 		}
@@ -244,6 +210,10 @@
 				print fread($fm,min(1024*16,$end-$cur));
 		  	  	$cur+=1024*16;
 		  	}
+		}
+		
+		private function getVideoSize($file) {
+			
 		}
 		
 		public function previewAction()
