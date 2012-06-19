@@ -100,7 +100,7 @@
 					$uiid .= '-V';
 					break;
 				case 'application/octet-stream': 
-					switch($pathinfo["extension"])
+					switch(strtolower($pathinfo["extension"]))
 					{
 						case 'png':
 					    case 'jpg':
@@ -109,7 +109,8 @@
 					    	$type = 'picture';
 					        $uiid .= '-P';
 					        break;
-						case 'mp3':
+						case 'mp3':	
+						case 'ogg':
 					    case 'wav':
 					    case 'aac':
 					    case 'm4a':

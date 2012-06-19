@@ -7,6 +7,13 @@
 			$autoloader = Zend_Loader_Autoloader::getInstance();
 			$autoloader->setFallbackAutoloader(true);
 		}
+		
+		protected function _initAccessControl()
+		{
+			header("Access-Control-Allow-Origin: *");
+			header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+			header('Access-Control-Allow-Headers: *');
+		}
 
 		protected function _initConfig()
 		{
@@ -87,7 +94,7 @@
 			
 			// Default picture route
 			$route3 = new Zend_Controller_Router_Route_Regex(
-			    'm/(?:(?:([0-9]+)x([0-9]+)/))*(MC-[a-zA-Z]+-P)\.(png|jpg|gif)',
+			    'm/(?:(?:([0-9]+)x([0-9]+)/)|(?:(inner)/))*(MC-[a-zA-Z]+-P)\.(png|jpg|gif)',
 			    array(
 			        'controller' => 'Media',
 			        'action' => 'picture'
@@ -95,15 +102,16 @@
 			    array(
 			    	1 => 'width',
 			    	2 => 'height',
-			    	3 => 'media_uiid',
-			    	4 => 'format'
+			    	3 => 'mode',
+			    	4 => 'media_uiid',
+			    	5 => 'format'
 			    )
 			);
 			$router->addRoute('getPicture', $route3);
 			
 			// Default audio route
 			$route4 = new Zend_Controller_Router_Route_Regex(
-			    'm/(?:(?:(?:([0-9]+)bits-s)/)|(?:([0-9]+)Hz/)|(?:([0-9]+)k/))*(MC-[a-zA-Z]+-A)\.(mp3|wav|aac|m4a)',
+			    'm/(?:(?:(?:([0-9]+)bits-s)/)|(?:([0-9]+)Hz/)|(?:([0-9]+)k/))*(MC-[a-zA-Z]+-A)\.(mp3|wav|aac|m4a|ogg)',
 			    array(
 			        'controller' => 'Media',
 			        'action' => 'audio'

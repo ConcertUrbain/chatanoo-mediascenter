@@ -356,6 +356,9 @@
     				break;
     			case 'wav':
     				break; 
+    			case 'ogg':
+					$query .= "-acodec libvorbis -aq 60 ";
+    				break;
     			case 'aac':
 					$query .= "-acodec aac -strict experimental ";
     				break;
@@ -369,7 +372,7 @@
 				$query .= "-ar ".$sampling_rate." ";
 			if($limit_size)
 				$query .= "-fs ".$limit_size." ";
-			$query .= "-map_meta_data ";
+			//$query .= "-map_meta_data ";
 			$query .= "'".$outputFile."'";
 			
 			$this->_helper->viewRenderer->setNoRender(true);
@@ -410,7 +413,8 @@
 				return;
 			}
 			
-			$f= @fopen($outputFile,"r"); 
+			$this->smartReadFile($outputFile, $filename);
+			/*$f= @fopen($outputFile,"r"); 
 			if($f) 
 			{ 
 				$content = fread($f, filesize($outputFile));
@@ -426,13 +430,14 @@
 				}
 				print($content);
 				fclose($f); 
-			}
+			}*/
 		}
 		
 		public function pictureAction()
-		{		
+		{			
 			$width = 		($this->getRequest()->getParam('width') != '')?		$this->getRequest()->getParam('width') 	: false;
 			$height = 		($this->getRequest()->getParam('height') != '')?	$this->getRequest()->getParam('height') : false;
+			$mode = 		($this->getRequest()->getParam('mode') != '')?	$this->getRequest()->getParam('mode') : false;
 			$media_uiid = 	$this->getRequest()->getParam('media_uiid');
 			$format = 		$this->getRequest()->getParam('format');
 			
@@ -468,6 +473,8 @@
 			$outputFile = $media_path.$media_uiid;
 			if($width && $height)
 				$outputFile .= "_".$width."x".$height;
+			if($mode)
+				$outputFile .= "_".$mode;
 			$outputFile .= ".".$format;
 			
 			$inputFile = $media_path.$row['original'];
@@ -514,7 +521,7 @@
 				    default:
 				        Zend_Registry::get('logger')->error("L'image n'est pas dans un format reconnu. Extensions autorisŽes : jpg/jpeg, gif, png");
 						$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-						$this->getResponse()->appendBody('<p>Not found</p>'); 
+						$this->getResponse()->appendBody('<p>Not found 0</p>'); 
 						return;
 				        break;
 				}
@@ -526,20 +533,44 @@
 				$src_x = 0;
 				$src_y = 0;
 				
+				$dst_x = 0;
+				$dst_y = 0;
+				
+				$dst_w = $width;
+				$dst_h = $height;
+				
 				if($width && $height)
 				{
-					$dst_w = $width;
-					$dst_h = $height;
-					
-					if($dst_w*$src_h/$dst_h > $src_w)
+					if(!$mode)
 					{
-						$h = $dst_h * $src_w / $dst_w;
-						$w = $src_w;
+						
+						if($dst_w*$src_h/$dst_h > $src_w)
+						{
+							$h = $dst_h * $src_w / $dst_w;
+							$w = $src_w;
+						}
+						else
+						{
+							$w = $dst_w * $src_h / $dst_h;
+							$h = $src_h;
+						}
+						
+						$src_x = ($src_w - $w) / 2;
+						$src_y = ($src_h - $h) / 2;
+						
+						$src_w = $w;
+						$src_h = $h;
 					}
 					else
-					{
-						$w = $dst_w * $src_h / $dst_h;
-						$h = $src_h;
+					{						
+						if($src_w/$dst_w > $src_h/$dst_h)
+						{
+							$dst_h = ($dst_w * $src_h) / $src_w;
+						}
+						else
+						{
+							$dst_w = ($dst_h * $src_w) / $src_h;
+						}
 					}
 				}
 				else 
@@ -548,8 +579,17 @@
 					$dst_h = $src_h;
 				}
 				
+				/*print('dst_x: ' . $dst_x . '\n ');
+				print('dst_y: ' . $dst_y . '\n ');
+				print('src_x: ' . $src_x . '\n ');
+				print('src_y: ' . $src_y . '\n ');
+				print('dst_w: ' . $dst_w . '\n ');
+				print('dst_h: ' . $dst_h . '\n ');
+				print('src_w: ' . $src_w . '\n ');
+				print('src_h: ' . $src_h . '\n ');
+				die();*/
 				$dst_im = imagecreatetruecolor($dst_w,$dst_h);
-				imagecopyresampled($dst_im, $src_im, 0, 0, ($src_w - $w) / 2, ($src_h - $h) / 2, $dst_w, $dst_h, $w, $h);			
+				imagecopyresampled($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);			
     		
 	    		switch($format)
 	    		{
@@ -571,7 +611,7 @@
 			if(!file_exists($outputFile))
 			{
 				$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-				$this->getResponse()->appendBody('<p>Not found</p>'); 
+				$this->getResponse()->appendBody('<p>Not found 1</p>'); 
 				return;
 			}
 			
@@ -585,7 +625,7 @@
 					unlink($outputFile);
 					
 					$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-					$this->getResponse()->appendBody('<p>Not found</p>'); 
+					$this->getResponse()->appendBody('<p>Not found 2</p>'); 
 					return;
 				}
 				print($content);
