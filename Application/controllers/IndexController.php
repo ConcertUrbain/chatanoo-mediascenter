@@ -87,6 +87,9 @@
 				case 'audio/vnd.wave':
 				case 'audio/aac':
 				case 'audio/x-m4a':
+				case 'audio/x-ms-wma':
+				case 'audio/mp3':
+				case 'audio/wav':
 					$type = 'audio';
 					$uiid .= '-A';
 					break;
