@@ -134,19 +134,19 @@
 			
 			if(!file_exists($outputFile))
 			{
-				Zend_Registry::get('logger')->info('[Video Convertion] exec: ' . escapeshellcmd($query));
+				//Zend_Registry::get('logger')->info('[Video Convertion] exec: ' . escapeshellcmd($query));
 				
 				ob_start();
 				passthru(escapeshellcmd($query));
 				$output = ob_get_contents();
 				ob_end_clean();
 				
-				Zend_Registry::get('logger')->info(Zend_Debug::dump($output, 'output', false));
+				//Zend_Registry::get('logger')->info(Zend_Debug::dump($output, 'output', false));
 			}
 			
 			if(!file_exists($outputFile))
 			{
-				Zend_Registry::get('logger')->err('[Video Convertion] ' . $outputFile . ' don\'t exists.');
+				//Zend_Registry::get('logger')->err('[Video Convertion] ' . $outputFile . ' don\'t exists.');
 				$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
 				$this->getResponse()->appendBody('<p>Not found</p>'); 
 				return;
@@ -281,14 +281,14 @@
 			
 			if(!file_exists($outputFile))
 			{
-				Zend_Registry::get('logger')->info('[Video Preview Convertion] exec: ' . escapeshellcmd($query));
+				//Zend_Registry::get('logger')->info('[Video Preview Convertion] exec: ' . escapeshellcmd($query));
 				
 				ob_start();
 				passthru(escapeshellcmd($query));
 				$output = ob_get_contents();
 				ob_end_clean();
 				
-				Zend_Registry::get('logger')->info(Zend_Debug::dump($output, 'output', false));
+				//Zend_Registry::get('logger')->info(Zend_Debug::dump($output, 'output', false));
 			}
 			
 			if(!file_exists($outputFile))
@@ -395,14 +395,14 @@
 			
 			if(!file_exists($outputFile))
 			{
-				Zend_Registry::get('logger')->info('[Audio Convertion] exec: ' . escapeshellcmd($query));
+				//Zend_Registry::get('logger')->info('[Audio Convertion] exec: ' . escapeshellcmd($query));
 				
 				ob_start();
 				passthru(escapeshellcmd($query));
 				$output = ob_get_contents();
 				ob_end_clean();
 				
-				Zend_Registry::get('logger')->info(Zend_Debug::dump($output, 'output', false));
+				//Zend_Registry::get('logger')->info(Zend_Debug::dump($output, 'output', false));
 			}
 			
 			if(!file_exists($outputFile))
@@ -496,7 +496,7 @@
 			
 			if(!file_exists($outputFile))
 			{
-				Zend_Registry::get('logger')->info('[Picture Convertion]');
+				//Zend_Registry::get('logger')->info('[Picture Convertion]');
 				
 				// DŽterminer l'extension ˆ partir du nom de fichier
 				$extension = substr( $inputFile, -3 );
@@ -519,7 +519,7 @@
 				        break;
 			
 				    default:
-				        Zend_Registry::get('logger')->error("L'image n'est pas dans un format reconnu. Extensions autorisŽes : jpg/jpeg, gif, png");
+				        //Zend_Registry::get('logger')->error("L'image n'est pas dans un format reconnu. Extensions autorisŽes : jpg/jpeg, gif, png");
 						$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
 						$this->getResponse()->appendBody('<p>Not found 0</p>'); 
 						return;

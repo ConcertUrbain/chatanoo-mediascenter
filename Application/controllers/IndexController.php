@@ -37,7 +37,7 @@
 			$postdata = array();
 			$postdata ['file'] = "@".$filepath.";type=".$_FILES['file']['type'];
 			 
-			$post_url = 'http://ms.dring93.org/upload';
+			$post_url = 'http://mc.chatanoo.org/upload';
 			 
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_HEADER, 0);

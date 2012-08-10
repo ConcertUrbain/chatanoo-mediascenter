@@ -9,7 +9,7 @@
 
 			<!-- Time -->
 			<date>
-				<timezone></timezone>
+				<timezone>Europe/Berlin</timezone>
 			</date>
 		</phpSettings>
 

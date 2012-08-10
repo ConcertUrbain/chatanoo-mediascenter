@@ -4,7 +4,7 @@
 	defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/Application'));
 
 	// Define application environment
-	defined('APPLICATION_ENV') || define('APPLICATION_ENV', 'development');
+	defined('APPLICATION_ENV') || define('APPLICATION_ENV', 'preproduction');
 
 	// Typically, you will also want to add your library/ directory
 	// to the include_path, particularly if it contains your ZF install

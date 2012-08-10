@@ -130,9 +130,9 @@
 		// Logger
 		protected function _initLog()
 		{
-			$writer = new Zend_Log_Writer_Stream(APPLICATION_PATH . '/../Logs/log.txt');
+			/*$writer = new Zend_Log_Writer_Stream(APPLICATION_PATH . '/../Logs/log.txt');
 		
 			$logger = new Zend_Log($writer);
-			Zend_Registry::set('logger', $logger);
+			Zend_Registry::set('logger', $logger);*/
 		}
 	}

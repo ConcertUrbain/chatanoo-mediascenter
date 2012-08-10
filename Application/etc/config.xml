@@ -7,15 +7,15 @@
 	        <adapter>pdo_mysql</adapter>
 	        <params>
 	            <host>localhost</host>
-	            <username>medias_user</username>
-	            <password>concert</password>
-	            <dbname>dring93_media_center</dbname>
+	            <username>user_medias</username>
+	            <password>pass_medias</password>
+	            <dbname>chatanoo_medias</dbname>
 	        </params>
 	    </database>
 	    <mediasDirectory>Medias</mediasDirectory>
 	</production>
-
-	<development extends="production">
+	
+	<preproduction extends="production">
 		<debug>true</debug>
 	    <database>
 	        <adapter>pdo_mysql</adapter>
@@ -24,6 +24,19 @@
 	            <username>root</username>
 	            <password>root</password>
 	            <dbname>MediaCenter</dbname>
+	        </params>
+	    </database>
+	</preproduction>
+
+	<development extends="production">
+		<debug>true</debug>
+	    <database>
+	        <adapter>pdo_mysql</adapter>
+	        <params>
+	            <host>localhost</host>
+	            <username>user_medias_pre</username>
+	            <password>pass_medias_pre</password>
+	            <dbname>chatanoo_medias_preprod</dbname>
 	        </params>
 	    </database>
 	</development>
