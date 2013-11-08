@@ -132,8 +132,10 @@
 			
 			$this->_helper->viewRenderer->setNoRender(true);
 			
-			if(!file_exists($outputFile))
+			$key = md5($outputFile."-lock");
+			if(!file_exists($outputFile) && !Zend_Registry::get('cache')->test($key))
 			{
+				Zend_Registry::get('cache')->save($key);
 				//Zend_Registry::get('logger')->info('[Video Convertion] exec: ' . escapeshellcmd($query));
 				
 				ob_start();
@@ -142,13 +144,21 @@
 				ob_end_clean();
 				
 				//Zend_Registry::get('logger')->info(Zend_Debug::dump($output, 'output', false));
+				Zend_Registry::get('cache')->remove($key);
 			}
 			
-			if(!file_exists($outputFile))
+			if(!file_exists($outputFile) || Zend_Registry::get('cache')->test($key))
 			{
 				//Zend_Registry::get('logger')->err('[Video Convertion] ' . $outputFile . ' don\'t exists.');
-				$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-				$this->getResponse()->appendBody('<p>Not found</p>'); 
+				if(Zend_Registry::get('cache')->test($key)) {
+					$this->getResponse()->setRawHeader('HTTP/1.1 423 Locked'); 
+    				$this->getResponse()->setHeader('Content-type', 'text/html');
+					$this->getResponse()->appendBody('<p>Wait the build</p>'); 
+				} else {
+					$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
+    				$this->getResponse()->setHeader('Content-type', 'text/html');
+					$this->getResponse()->appendBody('<p>Not found</p>'); 
+				}
 				return;
 			}
 			
@@ -279,8 +289,10 @@
     				break;
     		}
 			
-			if(!file_exists($outputFile))
+			$key = md5($outputFile."-lock");
+			if(!file_exists($outputFile) && !Zend_Registry::get('cache')->test($key))
 			{
+				Zend_Registry::get('cache')->save($key);
 				//Zend_Registry::get('logger')->info('[Video Preview Convertion] exec: ' . escapeshellcmd($query));
 				
 				ob_start();
@@ -289,12 +301,20 @@
 				ob_end_clean();
 				
 				//Zend_Registry::get('logger')->info(Zend_Debug::dump($output, 'output', false));
+				Zend_Registry::get('cache')->remove($key);
 			}
 			
-			if(!file_exists($outputFile))
+			if(!file_exists($outputFile) || Zend_Registry::get('cache')->test($key))
 			{
-				$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-				$this->getResponse()->appendBody('<p>Not found</p>'); 
+				if(Zend_Registry::get('cache')->test($key)) {
+					$this->getResponse()->setRawHeader('HTTP/1.1 423 Locked'); 
+    				$this->getResponse()->setHeader('Content-type', 'text/html');
+					$this->getResponse()->appendBody('<p>Wait the build</p>'); 
+				} else {
+					$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
+    				$this->getResponse()->setHeader('Content-type', 'text/html');
+					$this->getResponse()->appendBody('<p>Not found</p>'); 
+				}
 				return;
 			}
 			
@@ -393,8 +413,10 @@
     				break;
     		}
 			
-			if(!file_exists($outputFile))
+			$key = md5($outputFile."-lock");
+			if(!file_exists($outputFile) && !Zend_Registry::get('cache')->test($key))
 			{
+				Zend_Registry::get('cache')->save($key);
 				//Zend_Registry::get('logger')->info('[Audio Convertion] exec: ' . escapeshellcmd($query));
 				
 				ob_start();
@@ -403,13 +425,20 @@
 				ob_end_clean();
 				
 				//Zend_Registry::get('logger')->info(Zend_Debug::dump($output, 'output', false));
+				Zend_Registry::get('cache')->remove($key);
 			}
 			
-			if(!file_exists($outputFile))
+			if(!file_exists($outputFile) || Zend_Registry::get('cache')->test($key))
 			{
-				$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-    			$this->getResponse()->setHeader('Content-type', 'text/html');
-				$this->getResponse()->appendBody('<p>Not found</p>'); 
+				if(Zend_Registry::get('cache')->test($key)) {
+					$this->getResponse()->setRawHeader('HTTP/1.1 423 Locked'); 
+    				$this->getResponse()->setHeader('Content-type', 'text/html');
+					$this->getResponse()->appendBody('<p>Wait the build</p>'); 
+				} else {
+					$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
+    				$this->getResponse()->setHeader('Content-type', 'text/html');
+					$this->getResponse()->appendBody('<p>Not found</p>'); 
+				}
 				return;
 			}
 			
@@ -494,8 +523,10 @@
     				break;
     		}
 			
-			if(!file_exists($outputFile))
+			$key = md5($outputFile."-lock");
+			if(!file_exists($outputFile) && !Zend_Registry::get('cache')->test($key))
 			{
+				Zend_Registry::get('cache')->save($key);
 				//Zend_Registry::get('logger')->info('[Picture Convertion]');
 				
 				// DŽterminer l'extension ˆ partir du nom de fichier
@@ -606,12 +637,21 @@
 				
 				imagedestroy($dst_im);
 				imagedestroy($src_im);
+
+				Zend_Registry::get('cache')->remove($key);
 			}
 			
-			if(!file_exists($outputFile))
+			if(!file_exists($outputFile) || Zend_Registry::get('cache')->test($key))
 			{
-				$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-				$this->getResponse()->appendBody('<p>Not found 1</p>'); 
+				if(Zend_Registry::get('cache')->test($key)) {
+					$this->getResponse()->setRawHeader('HTTP/1.1 423 Locked'); 
+    				$this->getResponse()->setHeader('Content-type', 'text/html');
+					$this->getResponse()->appendBody('<p>Wait the build</p>'); 
+				} else {
+					$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
+    				$this->getResponse()->setHeader('Content-type', 'text/html');
+					$this->getResponse()->appendBody('<p>Not found</p>'); 
+				}
 				return;
 			}
 			

@@ -13,6 +13,31 @@
 	        </params>
 	    </database>
 	    <mediasDirectory>Medias</mediasDirectory>
+	    
+	    <cache>
+	    	<frontend>
+	    		<adapter>Core</adapter>
+	    		<options>
+	    			<caching>true</caching>
+	    			<lifetime>1800</lifetime>
+	    			<automatic_serialization>true</automatic_serialization>
+	    		</options>
+	    	</frontend>
+	    	<backend>
+	    		<adapter>Memcached</adapter>
+	    		<options>
+    				<server>
+    					<host>127.0.0.1</host>
+    					<port>11211</port>
+    				</server>
+    				<server>
+    					<host>127.0.0.1</host>
+    					<port>11212</port>
+    				</server>
+	    			<compression>true</compression>
+	    		</options>
+	    	</backend>
+	    </cache>
 	</production>
 	
 	<preproduction extends="production">

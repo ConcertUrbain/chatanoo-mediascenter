@@ -49,6 +49,14 @@
 		</resources>
 	</production>
 
+	<preproduction extends="production">
+		<phpSettings>
+			<!-- Error -->
+			<display_startup_errors>0</display_startup_errors>
+			<display_errors>0</display_errors>
+		</phpSettings>
+	</preproduction>
+
 	<development extends="production">
 		<phpSettings>
 			<!-- Error -->
