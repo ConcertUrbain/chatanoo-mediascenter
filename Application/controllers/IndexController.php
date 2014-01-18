@@ -166,7 +166,7 @@
 			} 
 			else
 			{
-				print('Move Uploaded File Error');
+				print('Move Uploaded File Error (' . $filepath . ')');
 			}
 		}
 		
