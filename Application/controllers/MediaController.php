@@ -58,7 +58,7 @@
 			if (!$row)
 			{
 				$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-				$this->getResponse()->appendBody('<p>Not found</p>'); 
+				$this->getResponse()->appendBody('<p>Not found</p><p>This media don\'t exists in database</p>'); 
 				return;
 			}
 			$row = $row->toArray();
@@ -83,17 +83,23 @@
 			
 			$query = '/usr/local/bin/ffmpeg ';
 			$query .= "-i '".$media_path.$row['original']."' ";
-			if($bits)
+			if($bits) {
 				$query .= "-b ".$bits."k ";
+			} else {
+				$query .= "-b 1500k ";
+			}
 			
 			// Video codec	
 			switch($format)
     		{
     			case 'mp4':
-					$query .= "-vcodec mpeg4 ";
+					$query .= "-vcodec libx264 -vpre slow -vpre baseline ";
     				break;
 				case 'ogv':
-					$query .= "-vcodec libtheora -strict experimental ";
+					$query .= "-vcodec libtheora ";
+					break;
+				case 'webm':
+					$query .= "-vcodec libvpx ";
 					break;
 		    	case 'mov':
 					$query .= "-vcodec libx264 -vpre medium -coder 0 -trellis 0 -bf 0 -subq 6 -refs 5 ";
@@ -105,13 +111,13 @@
     		{
     			case 'mp4':
 		    	case 'mov':
-					$query .= "-acodec libfaac -ar 44100 ";
+					$query .= "";
 		    		break;
 		    	case 'ogv':
-					$query .= "-acodec libvorbis -ac 2 ";
+					$query .= "-acodec libvorbis -ab 160000 ";
 		    		break;
 		    	case 'webm':
-					$query .= "-acodec libvorbis -ac 2 -strict experimental ";
+					$query .= "-acodec libvorbis -ab 160000 -f webm ";
 		    		break;
 				default:
 					$query .= "-acodec libmp3lame -ar 44100 ";
@@ -137,6 +143,7 @@
 			{
 				Zend_Registry::get('cache')->save($key);
 				//Zend_Registry::get('logger')->info('[Video Convertion] exec: ' . escapeshellcmd($query));
+				//print('[Video Convertion] exec: ' . escapeshellcmd($query));
 				
 				ob_start();
 				passthru(escapeshellcmd($query));
@@ -157,7 +164,9 @@
 				} else {
 					$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
     				$this->getResponse()->setHeader('Content-type', 'text/html');
-					$this->getResponse()->appendBody('<p>Not found</p>'); 
+					$this->getResponse()->appendBody('<p>Not found</p><p>Media don\'t created</p>'); 
+					print('[Video Convertion] exec: ' . escapeshellcmd($query));
+					print('[Video Convertion] output: ' . $output);
 				}
 				return;
 			}
@@ -243,7 +252,7 @@
 			if (!$row)
 			{
 				$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-				$this->getResponse()->appendBody('<p>Not found</p>'); 
+				$this->getResponse()->appendBody('<p>Not found</p><p>This media don\'t exists in database</p>'); 
 				return;
 			}
 			$row = $row->toArray();
@@ -313,7 +322,7 @@
 				} else {
 					$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
     				$this->getResponse()->setHeader('Content-type', 'text/html');
-					$this->getResponse()->appendBody('<p>Not found</p>'); 
+					$this->getResponse()->appendBody('<p>Not found</p><p>Media don\'t created</p>'); 
 				}
 				return;
 			}
@@ -328,7 +337,7 @@
 					unlink($outputFile);
 					
 					$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
-					$this->getResponse()->appendBody('<p>Not found</p>'); 
+					$this->getResponse()->appendBody('<p>Not found</p><p>Media created without content</p>'); 
 					return;
 				}
 				print($content);
