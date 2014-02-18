@@ -93,7 +93,7 @@
 			switch($format)
     		{
     			case 'mp4':
-					$query .= "-vcodec libx264 -vpre slow -vpre baseline ";
+					$query .= "-vcodec mpeg4 ";
     				break;
 				case 'ogv':
 					$query .= "-vcodec libtheora ";
@@ -147,6 +147,7 @@
 				
 				ob_start();
 				passthru(escapeshellcmd($query));
+				//passthru("/usr/local/bin/ffmpeg -i '/var/www/medias-center/Application/../Medias/MC-MWEkZkGV-V/MC-MWEkZkGV-V.mp4' -b 1500k -vcodec libtheora -acodec libvorbis -ab 160000 -s 576x324 '/var/www/medias-center/Application/../Medias/MC-MWEkZkGV-V/MC-MWEkZkGV-V_576x324.ogv'");
 				$output = ob_get_contents();
 				ob_end_clean();
 				
@@ -171,67 +172,25 @@
 				return;
 			}
 			
-			$this->smartReadFile($outputFile, $filename);
+			// $this->smartReadFile($outputFile, $filename);
+    		$this->getResponse()->setHeader('Content-Length', filesize($outputFile));
+			readfile($outputFile);
 		}
 		
-		private function smartReadFile_OUT($location, $filename, $mimeType='application/octet-stream')
-		{ 
-			if(!file_exists($location))
-		  	{ 
-				header ("HTTP/1.0 404 Not Found");
-		  	  	return;
-		  	}
-          	
-		  	$size=filesize($location);
-		  	$time=date('r',filemtime($location));
-          	
-		  	$fm=@fopen($location,'rb');
-		  	if(!$fm)
-		  	{ 
-				header ("HTTP/1.0 505 Internal server error");
-		  	  	return;
-		  	}
-          	
-		  	$begin=0;
-		  	$end=$size;
-          	
-		  	if(isset($_SERVER['HTTP_RANGE']))
-		  	{ 
-				if(preg_match('/bytes=\h*(\d+)-(\d*)[\D.*]?/i', $_SERVER['HTTP_RANGE'], $matches))
-		  	  	{ 
-					$begin=intval($matches[1]);
-		  	    	if(!empty($matches[2]))
-		  	      		$end=intval($matches[2]);
-		  	  	}
-		  	}
-          	
-		  	if($begin>0||$end<$size)
-		  	  	header('HTTP/1.0 206 Partial Content');
-		  	else
-		  	  	header('HTTP/1.0 200 OK');  
-          	
-		  	//header("Content-Type: $mimeType"); 
-		  	header('Cache-Control: public, must-revalidate, max-age=0');
-		  	header('Pragma: no-cache');  
-		  	header('Accept-Ranges: bytes');
-		  	header('Content-Length:'.($end-$begin));
-		  	header("Content-Range: bytes $begin-$end/$size");
-		  	header("Content-Disposition: inline; filename=$filename");
-		  	header("Content-Transfer-Encoding: binary\n");
-		  	header("Last-Modified: $time");
-		  	header('Connection: close');  
-          	
-		  	$cur=$begin;
-		  	fseek($fm,$begin,0);
-          	
-		  	while(!feof($fm)&&$cur<$end&&(connection_status()==0))
-		  	{ 
-				print fread($fm,min(1024*16,$end-$cur));
-		  	  	$cur+=1024*16;
-		  	}
-		}
-
-		private function smartReadFile($location, $filename, $mimeType = 'application/octet-stream')
+		/**
+		* Reads the requested portion of a file and sends its contents to the client with the appropriate headers.
+		* 
+		* This HTTP_RANGE compatible read file function is necessary for allowing streaming media to be skipped around in.
+		* 
+		* @param string $location
+		* @param string $filename
+		* @param string $mimeType
+		* @return void
+		* 
+		* @link https://groups.google.com/d/msg/jplayer/nSM2UmnSKKA/Hu76jDZS4xcJ
+		* @link http://php.net/manual/en/function.readfile.php#86244
+		*/
+		function smartReadFile($location, $filename, $mimeType = 'application/octet-stream')
 		{
 			if (!file_exists($location))
 			{
@@ -263,7 +222,7 @@
 					}
 				}
 			}
-		
+
 			if (isset($_SERVER['HTTP_RANGE']))
 			{
 				header('HTTP/1.1 206 Partial Content');
@@ -295,7 +254,6 @@
 				$cur += 1024 * 16;
 			}
 		}
-
 		
 		private function getVideoSize($file) {
 			
@@ -452,7 +410,7 @@
     			case 'wav':
     				break; 
     			case 'ogg':
-					$query .= "-acodec libvorbis -aq 60 ";
+					$query .= "-vcodec libtheora -acodec libvorbis ";
     				break;
     			case 'aac':
 					$query .= "-acodec aac -strict experimental ";
@@ -479,6 +437,9 @@
     				break;
     			case 'wav':
     				$this->getResponse()->setHeader('Content-type', 'audio/vnd.wave');
+    				break;
+    			case 'ogg':
+    				$this->getResponse()->setHeader('Content-type', 'audio/ogg');
     				break;
     			case 'aac':
     				$this->getResponse()->setHeader('Content-type', 'audio/aac');
@@ -517,7 +478,9 @@
 				return;
 			}
 			
-			$this->smartReadFile($outputFile, $filename);
+			//$this->smartReadFile($outputFile, 'audio'.$format);
+    		$this->getResponse()->setHeader('Content-Length', filesize($outputFile));
+			readfile($outputFile);
 			/*$f= @fopen($outputFile,"r"); 
 			if($f) 
 			{ 
@@ -604,7 +567,7 @@
 				Zend_Registry::get('cache')->save($key);
 				//Zend_Registry::get('logger')->info('[Picture Convertion]');
 				
-				// DŽterminer l'extension ˆ partir du nom de fichier
+				// DÂŽterminer l'extension Âˆ partir du nom de fichier
 				$extension = substr( $inputFile, -3 );
 				// Afin de simplifier les comparaisons, on met tout en minuscule
 				$extension = strtolower( $extension );
@@ -612,7 +575,7 @@
 				switch ( $extension ) {
 			
 				    case "jpg":
-				    case "peg": //pour le cas o l'extension est "jpeg"
+				    case "peg": //pour le cas oÂ l'extension est "jpeg"
 				        $src_im = imagecreatefromjpeg( $inputFile );
 				        break;
 			
@@ -625,7 +588,7 @@
 				        break;
 			
 				    default:
-				        //Zend_Registry::get('logger')->error("L'image n'est pas dans un format reconnu. Extensions autorisŽes : jpg/jpeg, gif, png");
+				        //Zend_Registry::get('logger')->error("L'image n'est pas dans un format reconnu. Extensions autorisÂŽes : jpg/jpeg, gif, png");
 						$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found'); 
 						$this->getResponse()->appendBody('<p>Not found 0</p>'); 
 						return;
