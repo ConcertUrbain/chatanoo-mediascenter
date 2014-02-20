@@ -5,13 +5,7 @@
 
 	// Define application environment
 	defined('APPLICATION_ENV') || define('APPLICATION_ENV', 'preproduction');
-
-	// Typically, you will also want to add your library/ directory
-	// to the include_path, particularly if it contains your ZF install
-	set_include_path(implode(PATH_SEPARATOR, array(
-	    APPLICATION_PATH . '/../Library',
-	    get_include_path(),
-	)));
+	require 'vendor/autoload.php';
 
 	/** Zend_Application */
 	require_once 'Zend/Application.php';
